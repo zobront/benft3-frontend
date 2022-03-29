@@ -40,7 +40,7 @@ function App() {
     if (status === 'signing') {
       return {header: 'Signing Transaction', message: 'Please sign your transaction in Metamask.'};
     } else if (status === 'pending') {
-      return {header: 'Pending Block Confirmation', message: 'Assuming traffic is reason, everything should be confirmed in about 15 seconds.'};
+      return {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds.'};
     } else if (status === 'failed') {
       return {header: 'Failed', message: `The transaction seems to have failed. ${errorMessage}`};
     } else if (status === 'success') {
