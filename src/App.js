@@ -33,7 +33,7 @@ function App() {
   }, [])
 
   const mintable = () => {
-    return checked && proof.length > 0 && (chainId === '0x1' || chainId === '0x7a69' || chainId === '0x4');
+    return checked && proof.length > 0 && chainId === '0x4';
   }
 
   const statusToMessage = () => {
@@ -45,7 +45,7 @@ function App() {
       return {header: 'Failed', message: `The transaction seems to have failed. ${errorMessage}`};
     } else if (status === 'success') {
       if (tokenId) {
-        return {header: 'Congrats!', message: `You are the proud owner of a Bitcoin & Billionaires NFT. Check it out here: https://opensea.io/assets/${contract.address}/${tokenId}`};
+        return {header: 'Congrats!', message: `You are the proud owner of a Bitcoin & Billionaires NFT. Check it out here: https://testnets.opensea.io/assets/${contract.address}/${tokenId}`};
       } else {
         return {header: 'Congrats!', message: `You are the proud owner of a new Bitcoin & Billionaires NFT. Head over to OpenSea to check it out!`};
       }
@@ -108,7 +108,7 @@ function App() {
                             {mintable() ? 
                               'Mint Your Free Bitcoin & Billionaires NFT' : 
                               <span>
-                                { chainId !== '0x1' && chainId !== '0x4' && chainId !== '0x7a69' ? 'Wrong Network: Connect to Ethereum Mainnet to Mint' : 'Please Agree to Terms & Conditions to Mint'}
+                                chainId !== '0x4' ? 'Wrong Network: Connect to Rinkeby to Mint' : 'Please Agree to Terms & Conditions to Mint'}
                               </span>
                             }
                           </Button>
@@ -134,7 +134,7 @@ function App() {
               <>
                 <Card.Header as="h3" style={{textAlign: 'center', marginBottom: '1rem' }}>{statusToMessage(status).header}</Card.Header>
                 <Card.Text>{statusToMessage(status).message}</Card.Text>
-                { status === 'success' ? <Card.Text><a href={`http://etherscan.io/tx/${txHash}`}>View Transaction on Etherscan</a></Card.Text> : null }
+                { status === 'success' ? <Card.Text><a href={`http://rinkeby.etherscan.io/tx/${txHash}`}>View Transaction on Etherscan</a></Card.Text> : null }
               </>
               }
             </Card.Body>
