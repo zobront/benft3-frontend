@@ -108,7 +108,7 @@ function App() {
                             {mintable() ? 
                               'Mint Your Free Bitcoin & Billionaires NFT' : 
                               <span>
-                                chainId !== '0x4' ? 'Wrong Network: Connect to Rinkeby to Mint' : 'Please Agree to Terms & Conditions to Mint'}
+                                {chainId !== '0x4' ? 'Wrong Network: Connect to Rinkeby to Mint' : 'Please Agree to Terms & Conditions to Mint'}
                               </span>
                             }
                           </Button>
