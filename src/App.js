@@ -137,7 +137,7 @@ function App() {
                           {mintable() ? 
                             'Mint Your Free Bitcoin & Billionaires NFT' : 
                             <span>
-                              {chainId === '0x1' ?  'Please Agree to Terms & Conditions to Mint' : 'Wrong Network: Connect to Rinkeby to Mint'}
+                              {chainId === '0x1' ?  'Please Agree to Terms & Conditions to Mint' : 'Wrong Network: Connect to Mainnet to Mint'}
                             </span>
                           }
                         </Button>
@@ -168,7 +168,7 @@ function App() {
                   <tbody>
                     <tr>
                       <td style={{padding: "10px"}}><a href={openSeaLink} rel="noreferrer" target="_blank">Check it out on OpenSea!</a></td>
-                      <td style={{padding: "10px"}}><Card.Text><a href={`http://rinkeby.etherscan.io/tx/${txHash}`} rel="noreferrer" target="_blank">View Transaction on Etherscan</a></Card.Text></td>
+                      <td style={{padding: "10px"}}><Card.Text><a href={`http://etherscan.io/tx/${txHash}`} rel="noreferrer" target="_blank">View Transaction on Etherscan</a></Card.Text></td>
                     </tr>
                     <tr style={{marginTop: "100 px"}}>
                       <td style={{textAlign: 'center'}}><img src="/opensea.png" width="100" height="100" href={openSeaLink} alt="" rel="noreferrer" target="_blank" /></td>
