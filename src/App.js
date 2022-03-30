@@ -17,6 +17,7 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [checked, setChecked] = useState(false);
   const [tokenId, setTokenId] = useState();
+  const [openSeaLink, setOpenSeaLink] = useState('');
   const [manualAddress, setManualAddress] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
 
@@ -51,10 +52,9 @@ function App() {
       return {header: 'Failed', message: `The transaction seems to have failed. ${errorMessage}`};
     } else if (status === 'success') {
       if (tokenId) {
-        return {header: 'Congrats!', message: `You are the proud owner of a Bitcoin & Billionaires NFT. Check it out here: https://testnets.opensea.io/assets/${contract.address}/${tokenId}`};
-      } else {
-        return {header: 'Congrats!', message: `You are the proud owner of a new Bitcoin & Billionaires NFT. Head over to OpenSea to check it out!`};
+        setOpenSeaLink(`https://testnets.opensea.io/assets/${contract.address}/${tokenId}`)
       }
+      return {header: 'Congrats!', message: 'You are the proud owner of a Bitcoin & Billionaires NFT.'};
     }
   }
 
@@ -160,7 +160,12 @@ function App() {
             <>
               <Card.Header as="h3" style={{textAlign: 'center', marginBottom: '1rem' }}>{statusToMessage(status).header}</Card.Header>
               <Card.Text>{statusToMessage(status).message}</Card.Text>
-              { status === 'success' ? <Card.Text><a href={`http://rinkeby.etherscan.io/tx/${txHash}`}>View Transaction on Etherscan</a></Card.Text> : null }
+              { status === 'success' ? 
+                <div>
+                  { openSeaLink ? <Card.Text><a href={openSeaLink}>Reveal! See Your NFT on OpenSea...</a></Card.Text> : null }
+                  <Card.Text><a href={`http://rinkeby.etherscan.io/tx/${txHash}`}>View Transaction on Etherscan</a></Card.Text> 
+                </div>
+              : null }
             </>
             }
           </Card.Body>
@@ -175,7 +180,7 @@ function App() {
           height: "190px",
           width: "100%",
         }}>
-          <h5 style={{margin: "0px"}}>Prefer to Mint on Etherscan?</h5>
+          <h5 style={{margin: "0px"}}>Prefer to Mint on Etherscan? <a rel="noreferrer" target="_blank" href="https://www.loom.com/share/e01bd0f2e38248b6b13f944039d96ff2">(Walkthrough Video)</a></h5>
           <div style={{width: "60%", margin: 'auto'}}><hr /></div>
           <table style={{width: "100%"}}>
             <tbody>
@@ -192,7 +197,7 @@ function App() {
                 onClick={() => copyManualProof()}>
                   {!copyStatus ? 'Copy Proof' : copyStatus === 'copied' ? 'Copied!' : copyStatus === 'error' ? 'Not A Valid Address!' : 'Not Whitelisted!'}
               </Button></td>
-              <td><Button style={{width: "60%", textAlign: 'center', margin: "0 20px"}} href={ contract ? `http://rinkeby.etherscan.io/address/${contract.address}` : ''}>Contract</Button></td>
+              <td><Button style={{width: "60%", textAlign: 'center', margin: "0 20px"}} href={ contract ? `http://rinkeby.etherscan.io/address/${contract.address}` : ''} rel="noreferrer" target="_blank">Contract</Button></td>
             </tr>
             </tbody>
           </table>
