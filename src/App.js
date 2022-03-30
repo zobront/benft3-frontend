@@ -16,7 +16,6 @@ function App() {
   const [txHash, setTxHash] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [checked, setChecked] = useState(false);
-  const [tokenId, setTokenId] = useState();
   const [openSeaLink, setOpenSeaLink] = useState('http://opensea.io/');
   const [manualAddress, setManualAddress] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
@@ -28,9 +27,15 @@ function App() {
     }
   }, [address]);
 
-  useEffect(() => {
-    window.addEventListener('resize', () => window.location.reload())
-  }, [])
+  // LISTENER TO HAVE BG ADJUST ON RESIZE, BUT IT WAS RELOADING PAGE MID TX
+  // useEffect(() => {
+  //   window.addEventListener('resize', () => {
+  //     console.log(status)
+  //     if (status === "init") {
+  //       window.location.reload()
+  //     }
+  //   })
+  // }, [])
 
   const getProof = (inputAddr) => {
     const addresses = addressJson.map(o => o.Address);
@@ -40,7 +45,7 @@ function App() {
   }
 
   const mintable = () => {
-    return checked && proof.length > 0 && chainId === '0x4';
+    return checked && proof.length > 0 && chainId === '0x1';
   }
 
   const statusToMessage = () => {
@@ -51,10 +56,7 @@ function App() {
     } else if (status === 'failed') {
       return {header: 'Failed', message: `The transaction seems to have failed. ${errorMessage}`};
     } else if (status === 'success') {
-      if (tokenId) {
-        setOpenSeaLink(`https://testnets.opensea.io/assets/${contract.address}/${tokenId}`)
-      }
-      return {header: 'Congrats!', message: 'You are the proud owner of a Bitcoin & Billionaires NFT.'};
+      return {header: 'Congrats!', message: 'You are the proud owner of a Bitcoin & Billionaires NFT. Give the links below a minute to load, then click them to reveal.'};
     }
   }
 
@@ -82,7 +84,10 @@ function App() {
       setStatus('failed')
     } else {
       setTxHash(receipt.transactionHash)
-      setTokenId(parseInt(receipt.events[0].args.tokenId))
+      try {
+        const tokenId = parseInt(receipt.events[0].args.tokenId)
+        setOpenSeaLink(`https://opensea.io/assets/${contract.address}/${tokenId}`)
+      } catch (err) {}
       setStatus('success')
     }
   }
@@ -132,7 +137,7 @@ function App() {
                           {mintable() ? 
                             'Mint Your Free Bitcoin & Billionaires NFT' : 
                             <span>
-                              {chainId !== '0x4' ? 'Wrong Network: Connect to Rinkeby to Mint' : 'Please Agree to Terms & Conditions to Mint'}
+                              {chainId === '0x1' ?  'Please Agree to Terms & Conditions to Mint' : 'Wrong Network: Connect to Rinkeby to Mint'}
                             </span>
                           }
                         </Button>
@@ -167,7 +172,7 @@ function App() {
                     </tr>
                     <tr style={{marginTop: "100 px"}}>
                       <td style={{textAlign: 'center'}}><img src="/opensea.png" width="100" height="100" href={openSeaLink} alt="" rel="noreferrer" target="_blank" /></td>
-                      <td style={{textAlign: 'center'}}><img src="/etherscan.png" width="100" height="100" href={`http://rinkeby.etherscan.io/tx/${txHash}`} alt="" rel="noreferrer" target="_blank" /></td>
+                      <td style={{textAlign: 'center'}}><img src="/etherscan.png" width="100" height="100" href={`http://etherscan.io/tx/${txHash}`} alt="" rel="noreferrer" target="_blank" /></td>
                     </tr>
                   </tbody>
                 </table>
@@ -203,7 +208,7 @@ function App() {
                 onClick={() => copyManualProof()}>
                   {!copyStatus ? 'Copy Proof' : copyStatus === 'copied' ? 'Copied!' : copyStatus === 'error' ? 'Not A Valid Address!' : 'Not Whitelisted!'}
               </Button></td>
-              <td><Button style={{width: "60%", textAlign: 'center', margin: "0 20px"}} href={ contract ? `http://rinkeby.etherscan.io/address/${contract.address}` : ''} rel="noreferrer" target="_blank">Contract</Button></td>
+              <td><Button style={{width: "60%", textAlign: 'center', margin: "0 20px"}} href={ contract ? `http://etherscan.io/address/${contract.address}` : ''} rel="noreferrer" target="_blank">Contract</Button></td>
             </tr>
             </tbody>
           </table>

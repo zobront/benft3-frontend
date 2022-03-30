@@ -12,7 +12,7 @@ const ContractProvider = (props) => {
 
   useEffect(() => {
     setContract(new ethers.Contract(
-      '0xB790e2Bb937e5A5FBd587bf9b327020866D94DE1',
+      '0xb19242eB66804044798EBBEbCD70F52EDa430498',
       BeNFTArtifact.abi,
       provider
     )
