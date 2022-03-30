@@ -95,7 +95,7 @@ function App() {
         setTimeout(() => { setCopyStatus('')  }, 2000);
         return
       }
-      let proofText = "['" + proofArray.map(o => o.toString()).join("','") + "']"
+      let proofText = "[" + proofArray.map(o => o.toString()).join(",") + "]"
       navigator.clipboard.writeText(proofText)
       setCopyStatus('copied');
       setTimeout(() => { setCopyStatus('')  }, 2000);
@@ -103,8 +103,6 @@ function App() {
       setCopyStatus('error');
       setTimeout(() => { setCopyStatus('')  }, 2000);
     }
-    
-    return getProof(manualAddress);
   }
 
 
