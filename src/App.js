@@ -17,7 +17,7 @@ function App() {
   const [errorMessage, setErrorMessage] = useState('');
   const [checked, setChecked] = useState(false);
   const [tokenId, setTokenId] = useState();
-  const [openSeaLink, setOpenSeaLink] = useState('');
+  const [openSeaLink, setOpenSeaLink] = useState('http://opensea.io/');
   const [manualAddress, setManualAddress] = useState('');
   const [copyStatus, setCopyStatus] = useState('');
 
@@ -105,8 +105,6 @@ function App() {
     }
   }
 
-
-
   return (
     <div className="App">
       <div style={{ backgroundImage:`url(/background.png)`, backgroundRepeat:"no-repeat", backgroundSize:"cover", height: window.innerHeight, width: window.innerWidth }}>
@@ -159,12 +157,20 @@ function App() {
             :
             <>
               <Card.Header as="h3" style={{textAlign: 'center', marginBottom: '1rem' }}>{statusToMessage(status).header}</Card.Header>
-              <Card.Text>{statusToMessage(status).message}</Card.Text>
+              <Card.Text style={{textAlign: 'center'}}>{statusToMessage(status).message}</Card.Text>
               { status === 'success' ? 
-                <div>
-                  { openSeaLink ? <Card.Text><a href={openSeaLink}>Reveal! See Your NFT on OpenSea...</a></Card.Text> : null }
-                  <Card.Text><a href={`http://rinkeby.etherscan.io/tx/${txHash}`}>View Transaction on Etherscan</a></Card.Text> 
-                </div>
+                <table>
+                  <tbody>
+                    <tr>
+                      <td style={{padding: "10px"}}><a href={openSeaLink} rel="noreferrer" target="_blank">Check it out on OpenSea!</a></td>
+                      <td style={{padding: "10px"}}><Card.Text><a href={`http://rinkeby.etherscan.io/tx/${txHash}`} rel="noreferrer" target="_blank">View Transaction on Etherscan</a></Card.Text></td>
+                    </tr>
+                    <tr style={{marginTop: "100 px"}}>
+                      <td style={{textAlign: 'center'}}><img src="/opensea.png" width="100" height="100" href={openSeaLink} alt="" rel="noreferrer" target="_blank" /></td>
+                      <td style={{textAlign: 'center'}}><img src="/etherscan.png" width="100" height="100" href={`http://rinkeby.etherscan.io/tx/${txHash}`} alt="" rel="noreferrer" target="_blank" /></td>
+                    </tr>
+                  </tbody>
+                </table>
               : null }
             </>
             }
