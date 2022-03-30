@@ -90,6 +90,11 @@ function App() {
   const copyManualProof = () => {
     try {
       const proofArray = getProof(manualAddress)
+      if (proofArray.length === 0) {
+        setCopyStatus('noproof');
+        setTimeout(() => { setCopyStatus('')  }, 2000);
+        return
+      }
       let proofText = "['" + proofArray.map(o => o.toString()).join("','") + "']"
       navigator.clipboard.writeText(proofText)
       setCopyStatus('copied');
@@ -177,19 +182,19 @@ function App() {
           <table style={{width: "100%"}}>
             <tbody>
             <tr>
-              <td style={{textAlign: 'center'}}>Step 1:<h6>Enter Address</h6></td>
+              <td style={{textAlign: 'center'}}>Step 1:<h6>Enter Whitelisted Address</h6></td>
               <td style={{textAlign: 'center'}}>Step 2:<h6>Create Proof & Copy to Clipboard</h6></td>
               <td style={{textAlign: 'center'}}>Step 3:<h6>Input on Etherscan</h6></td>
             </tr>
             <tr>
-              <td style={{width: "40%"}}><Form.Control placeholder="Whitelisted Address" onChange={ (e) => setManualAddress(e.target.value) }></Form.Control></td>
+              <td style={{width: "40%"}}><Form.Control placeholder="0x..." onChange={ (e) => setManualAddress(e.target.value) }></Form.Control></td>
               <td><Button 
                 variant={!copyStatus ? 'primary' : copyStatus === 'copied' ? 'success' : 'danger'}
                 style={{width: "60%", margin: "0 20px"}}
                 onClick={() => copyManualProof()}>
-                  {!copyStatus ? 'Copy Proof' : copyStatus === 'copied' ? 'Copied!' : 'Not A Valid Address!'}
+                  {!copyStatus ? 'Copy Proof' : copyStatus === 'copied' ? 'Copied!' : copyStatus === 'error' ? 'Not A Valid Address!' : 'Not Whitelisted!'}
               </Button></td>
-              <td><Button style={{width: "60%", textAlign: 'center', margin: "0 20px"}} href="http://etherscan.com">Contract URL</Button></td>
+              <td><Button style={{width: "60%", textAlign: 'center', margin: "0 20px"}} href={ contract ? `http://rinkeby.etherscan.io/address/${contract.address}` : ''}>Contract</Button></td>
             </tr>
             </tbody>
           </table>
