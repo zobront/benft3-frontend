@@ -1,16 +1,48 @@
-import { useEthereum } from "./providers/EthereumProvider"
-import { useContract } from "./providers/ContractProvider"
+// import { useEthereum } from "./providers/EthereumProvider"
+// import { useContract } from "./providers/ContractProvider"
 import { useState, useEffect } from 'react';
 
 import { ethers } from 'ethers';
 import { MerkleTree }  from 'merkletreejs';
 import addressJson from './merkle/snapshot.json';
 
+import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
+import WalletConnect from "@walletconnect/web3-provider";
+import Web3Modal from "web3modal";
+import BeNFTArtifact from './providers/Artifact.json';
+
 import { Button, Navbar, Container, Card, Spinner, Form } from 'react-bootstrap';
 
+const web3Modal = new Web3Modal({
+  network: "mainnet",
+  cacheProvider: true,
+  providerOptions: {
+    walletlink: {
+      package: CoinbaseWalletSDK, 
+      options: {
+        appName: "Bitcoin & Billionaires Mint",
+        infuraId: "fb419f740b7e401bad5bec77d0d285a5"
+      }
+    },
+    walletconnect: {
+      package: WalletConnect, 
+      options: {
+        infuraId: "fb419f740b7e401bad5bec77d0d285a5"
+      }
+    }
+  }
+})
+
 function App() {
-  const { signer, address, chainId } = useEthereum();
-  const contract = useContract();
+  // const { signer, address, chainId } = useEthereum();
+  // const contract = useContract();
+  const [instance, setInstance] = useState();
+  const [provider, setProvider] = useState();
+  const [signer, setSigner] = useState();
+  const [address, setAddress] = useState();
+  const [chainId, setChainId] = useState();
+  const [contract, setContract] = useState();
+
   const [proof, setProof] = useState([]);
   const [status, setStatus] = useState('init');
   const [txHash, setTxHash] = useState('');
@@ -21,21 +53,68 @@ function App() {
   const [copyStatus, setCopyStatus] = useState('');
 
   useEffect(() => {
+    if (web3Modal.cachedProvider) {
+      connectWallet();
+    }
+   }, [])
+
+  useEffect(() => {
     if (address) {
       const proof = getProof(address);
       setProof(proof);
     }
   }, [address]);
 
-  // LISTENER TO HAVE BG ADJUST ON RESIZE, BUT IT WAS RELOADING PAGE MID TX
-  // useEffect(() => {
-  //   window.addEventListener('resize', () => {
-  //     console.log(status)
-  //     if (status === "init") {
-  //       window.location.reload()
-  //     }
-  //   })
-  // }, [])
+   useEffect(() => {
+    if (provider?.on) {
+      const handleAccountsChanged = (accounts) => {
+        console.log("accountsChanged", accounts);
+        if (accounts) setAddress(accounts[0]);
+      };
+
+      const handleChainChanged = (chainId) => {
+        setChainId(chainId);
+      };
+
+      instance.on("accountsChanged", handleAccountsChanged);
+      provider.on("chainChanged", handleChainChanged);
+
+      return () => {
+        if (provider.removeListener) {
+          provider.removeListener("accountsChanged", handleAccountsChanged);
+          provider.removeListener("chainChanged", handleChainChanged);
+        }
+      };
+    }
+  }, [provider, instance]);
+
+  const connectWallet = async () => {
+    try {
+      const instance = await web3Modal.connect();
+      setInstance(instance)
+
+      const provider = new ethers.providers.Web3Provider(instance);
+      setProvider(provider)
+
+      const accounts = await provider.listAccounts();
+      if (accounts) setAddress(accounts[0])
+      
+      const network = await provider.getNetwork();
+      setChainId(network.chainId);
+
+      const signer = provider.getSigner(accounts[0]);
+      setSigner(signer);
+
+      const contract = new ethers.Contract(
+        '0xb19242eB66804044798EBBEbCD70F52EDa430498',
+        BeNFTArtifact.abi,
+        provider
+      )
+      setContract(contract)
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   const getProof = (inputAddr) => {
     const addresses = addressJson.map(o => o.Address);
@@ -45,7 +124,7 @@ function App() {
   }
 
   const mintable = () => {
-    return checked && proof.length > 0 && chainId === '0x1';
+    return checked && proof.length > 0 && (chainId === 1 || chainId === '0x1');
   }
 
   const statusToMessage = () => {
@@ -112,19 +191,19 @@ function App() {
 
   return (
     <div className="App">
-      <div style={{ backgroundImage:`url(/background.png)`, backgroundRepeat:"no-repeat", backgroundSize:"cover", height: window.innerHeight, width: window.innerWidth }}>
+      <div style={{ backgroundImage:`url(/background.png)`, backgroundRepeat:"no-repeat", backgroundSize:"cover", height: '100vh', width: '100vw' }}>
         <Navbar bg="dark" variant="dark">
           <Container>
             <Navbar.Brand href="/">Ben Mezrich Project: Bitcoin & Billionaires</Navbar.Brand>
-            <Navbar.Text>{address.length ? 'Signed In As: ' + address.slice(0, 4) + '....' + address.slice(-4) : 'Not Connected'}</Navbar.Text>
+            <Navbar.Text>{address && address.length ? 'Signed In As: ' + address.slice(0, 4) + '....' + address.slice(-4) : <Button variant="light" onClick={connectWallet}>Connect Wallet</Button>}</Navbar.Text>
           </Container>
         </Navbar>
 
-        <Card style={{ width: '32rem', margin: 'auto', marginTop: '10rem' }}>
+        <Card style={{ width: '32rem', margin: 'auto', marginTop: '8rem' }}>
           <Card.Body>
             { status === 'init' ?
               <div>
-                { address.length && chainId ?
+                { address && chainId ?
                   <div>
                     {proof && proof.length > 0 ? 
                       <div>
@@ -137,7 +216,7 @@ function App() {
                           {mintable() ? 
                             'Mint Your Free Bitcoin & Billionaires NFT' : 
                             <span>
-                              {chainId === '0x1' ?  'Please Agree to Terms & Conditions to Mint' : 'Wrong Network: Connect to Mainnet to Mint'}
+                              {(chainId === 1 || chainId === '0x1') ?  'Please Agree to Terms & Conditions to Mint' : 'Wrong Network: Connect to Mainnet to Mint'}
                             </span>
                           }
                         </Button>
@@ -152,7 +231,7 @@ function App() {
                   </div>
                   :
                   <div>
-                    <Card.Header as="h3" style={{textAlign: 'center', marginBottom: '1rem' }}>Please Connect Metamask</Card.Header>
+                    <Card.Header as="h3" style={{textAlign: 'center', marginBottom: '1rem' }}>Please Connect Your Wallet</Card.Header>
                     <div style={{ marginLeft: '45%', marginTop: '2rem', marginBottom: '2rem' }}>    
                       <Spinner animation="border" role="status"></Spinner>
                     </div>
