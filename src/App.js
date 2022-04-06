@@ -199,7 +199,7 @@ function App() {
           </Container>
         </Navbar>
 
-        <Card style={{ width: '32rem', margin: 'auto', marginTop: '8rem' }}>
+        <Card style={{ width: '32rem', margin: 'auto', marginTop: '8rem', zIndex: '1' }}>
           <Card.Body>
             { status === 'init' ?
               <div>
