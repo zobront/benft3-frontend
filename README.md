@@ -1,3 +1,3 @@
-# Front End for Ben Mezrich NFT #2 (Bitcoin Billionaires)
+# Front End for Capitalist Pigs NFT
 
-Go [here](https://github.com/zobront/benft2-backend) for contracts, scripts, etc.
+Go here for contracts, scripts, etc.
