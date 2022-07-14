@@ -11,7 +11,7 @@ export default function CardThankYou({tokenIds, txHash, contractAddr}) {
                 </Card.Text>
                 <Card.Text style={{textAlign: 'center', margin: '2rem'}}>
                     <a href={`http://testnets.opensea.io/assets/${contractAddr}/${tokenIds[0]}`} alt="" rel="noreferrer" target="_blank" ><img src="/opensea.png" width="100" height="100" style={{marginRight: '1rem'}} /></a>
-                    <a href={`http://etherscan.io/tx/${txHash}`} alt="" rel="noreferrer" target="_blank"><img src="/etherscan.png" width="100" height="100" style={{marginLeft: '1rem'}} /></a>
+                    <a href={`http://rinkeby.etherscan.io/tx/${txHash}`} alt="" rel="noreferrer" target="_blank"><img src="/etherscan.png" width="100" height="100" style={{marginLeft: '1rem'}} /></a>
                 </Card.Text>
             </Card.Body>
         </Card>
