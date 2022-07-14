@@ -93,7 +93,7 @@ export default function App() {
     closed: {header: 'Minting is Closed', message: 'Come back on Tuesday Jul 18th!'},
     wrongChain: {header: 'Wrong Network', message: 'Please switch to Ethereum Mainnet to mint.'},
     signing: {header: 'Signing Transaction', message: 'Please sign your transaction in Metamask.'},
-    pending: {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds.'},
+    pending: {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds. Please leave this window open while you wait.'},
     alreadyMinted: {header: 'You already minted!', message: `You've already used your whitelist spot. You'll be able to mint again if more are available in the public mint.`},
     unknownError: {header: 'Unknown Error', message: `Something went wrong. Please try again, and reach out to the mods if it doesn't resolve.`}
   }

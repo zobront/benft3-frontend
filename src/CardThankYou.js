@@ -10,8 +10,8 @@ export default function CardThankYou({tokenIds, txHash, contractAddr}) {
                     Congratulations! Please give Etherscan and OpenSea a couple minutes to update their records, then click the links below to check out your new NFT.
                 </Card.Text>
                 <Card.Text style={{textAlign: 'center', margin: '2rem'}}>
-                    <img src="/opensea.png" width="100" height="100" style={{marginRight: '1rem'}} href={`http://testnets.opensea.io/assets/${contractAddr}/${tokenIds[0]}`} alt="" rel="noreferrer" target="_blank" />
-                    <img src="/etherscan.png" width="100" height="100" style={{marginLeft: '1rem'}} href={`http://etherscan.io/tx/1298`} alt="" rel="noreferrer" target="_blank" />
+                    <a href={`http://testnets.opensea.io/assets/${contractAddr}/${tokenIds[0]}`} alt="" rel="noreferrer" target="_blank" ><img src="/opensea.png" width="100" height="100" style={{marginRight: '1rem'}} /></a>
+                    <a href={`http://etherscan.io/tx/${txHash}`} alt="" rel="noreferrer" target="_blank"><img src="/etherscan.png" width="100" height="100" style={{marginLeft: '1rem'}} /></a>
                 </Card.Text>
             </Card.Body>
         </Card>
