@@ -9,7 +9,7 @@ const web3Modal = new Web3Modal({
       walletlink: {
         package: CoinbaseWalletSDK, 
         options: {
-          appName: "Bitcoin & Billionaires Mint",
+          appName: "Vegas BeNFT Mint",
           infuraId: "fb419f740b7e401bad5bec77d0d285a5"
         }
       },

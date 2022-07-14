@@ -11,7 +11,7 @@ import CardPresaleMint from './CardPresaleMint'
 import CardMessage from './CardMessage'
 import CardThankYou from './CardThankYou'
 
-const CHAIN_IDS = [1, 4]
+const CHAIN_IDS = [0x1, 0x4, 0x7a69]
 
 export default function App() {
   const [status, setStatus] = useState('init');
@@ -27,6 +27,7 @@ export default function App() {
   const [mintStatus, setMintStatus] = useState();
   const [mintPrice, setMintPrice] = useState();
   const [tokenIds, setTokenIds] = useState();
+  const [txHash, setTxHash] = useState();
 
   useEffect(() => {
     if (web3Modal.cachedProvider) {
@@ -41,7 +42,6 @@ export default function App() {
         if (accounts) setAddress(accounts[0]);
       };
 
-      // TODO: DO SOMETHING TO FORCE REFRESH HERE
       const handleChainChanged = (chainId) => {
         setChainId(chainId);
       };
@@ -76,30 +76,29 @@ export default function App() {
       setSigner(signer);
 
       const contract = new ethers.Contract(
-        '0x78D72E60BaE892F97b97fEBAE5886DaB2eF0cbC8',
+        '0x2b58c62be01c1cfa9a00627f4eb8278b4e895736',
         ContractArtifact.abi,
         provider
       )
       setContract(contract)
 
-      const tierInfo = await contract.getTierInfo(0);
-      setMintPrice(ethers.utils.formatEther(tierInfo.price.toString()));
-      setMintStatus(tierInfo.mintStatus);
+      setMintPrice('0.06');
+      setMintStatus(await contract.getMintStatus());
     } catch (error) {
       console.error(error);
     }
   }
 
   const getMessage = {
-    closed: {header: 'Minting is Closed', message: 'Sign up for our email list to be notified when it next opens.'},
+    closed: {header: 'Minting is Closed', message: 'Come back on Tuesday Jul 18th!'},
     wrongChain: {header: 'Wrong Network', message: 'Please switch to Ethereum Mainnet to mint.'},
     signing: {header: 'Signing Transaction', message: 'Please sign your transaction in Metamask.'},
     pending: {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds.'},
     alreadyMinted: {header: 'You already minted!', message: `You've already used your whitelist spot. You'll be able to mint again if more are available in the public mint.`},
-    unknownError: {header: 'Unknown Error', message: `You can email xxx@capitalism.com for support if this problem continues.`}
+    unknownError: {header: 'Unknown Error', message: `Something went wrong. Please try again, and reach out to the mods if it doesn't resolve.`}
   }
 
-  const presaleMint = async (proof) => {
+  const presaleMint = async (proof, quantity) => {
     const balance = await contract.balanceOf(address);
     if (balance.toNumber() > 0) {
       setStatus('alreadyMinted');
@@ -108,7 +107,7 @@ export default function App() {
     setStatus('signing')
     let tx;
     try {
-      tx = await contract.connect(signer).mintPresale(0, proof, {value: ethers.utils.parseEther(mintPrice)})
+      tx = await contract.connect(signer).whitelistMint(proof, quantity, {value: ethers.utils.parseEther(mintPrice).mul(quantity)})
       setStatus('pending')
     } catch (err) {
       console.log(err)
@@ -124,7 +123,7 @@ export default function App() {
     setStatus('signing')
     let tx;
     try {
-      tx = await contract.connect(signer).mintPublic(0, quantity, {value: ethers.utils.parseEther(mintPrice).mul(quantity)})
+      tx = await contract.connect(signer).publicMint(quantity, {value: ethers.utils.parseEther(mintPrice).mul(quantity)})
       setStatus('pending')
     } catch (err) {
       console.log(err)
@@ -141,6 +140,7 @@ export default function App() {
       setStatus('unknownError')
     } else {
       try {
+        setTxHash(receipt.transactionHash);
         let tokenIds = [];
         const events = receipt.events;
         for (let i = 0; i < events.length; i++) {
@@ -157,7 +157,7 @@ export default function App() {
       <div style={{ backgroundImage:`url(/background.png)`, backgroundRepeat:"no-repeat", backgroundSize:"cover", height: '100vh', width: '100vw' }}>
         <Navbar bg="dark" variant="dark">
           <Container>
-            <Navbar.Brand href="/">Capitalist Pigs</Navbar.Brand>
+            <Navbar.Brand href="/">BeNFT: Vegas</Navbar.Brand>
             <Navbar.Text>{address && address.length ? 'Signed In As: ' + address.slice(0, 4) + '....' + address.slice(-4) : <Button variant="light" onClick={connectWallet}>Connect Wallet</Button>}</Navbar.Text>
           </Container>
         </Navbar>
@@ -175,7 +175,7 @@ export default function App() {
             </Card.Body>
           </Card>
 
-          : <CardThankYou tokenIds={tokenIds} address={address} contractAddr={contract.address} />}
+          : <CardThankYou tokenIds={tokenIds} contractAddr={contract.address} txHash={txHash} />}
       </div>
     </div>
   );
