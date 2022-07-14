@@ -16,6 +16,7 @@ const CHAIN_IDS = [0x1, 0x4, 0x7a69]
 export default function App() {
   const [status, setStatus] = useState('init');
   const PENDING_STATUSES = ["signing", "pending", "failed", "alreadyMinted", "unknownError"];
+  const MINT_PRICE = '0.06'
 
   const [instance, setInstance] = useState();
   const [provider, setProvider] = useState();
@@ -25,7 +26,6 @@ export default function App() {
 
   const [contract, setContract] = useState();
   const [mintStatus, setMintStatus] = useState();
-  const [mintPrice, setMintPrice] = useState();
   const [tokenIds, setTokenIds] = useState();
   const [txHash, setTxHash] = useState();
 
@@ -82,7 +82,6 @@ export default function App() {
       )
       setContract(contract)
 
-      setMintPrice('0.06');
       setMintStatus(await contract.getMintStatus());
     } catch (error) {
       console.error(error);
@@ -107,7 +106,7 @@ export default function App() {
     setStatus('signing')
     let tx;
     try {
-      tx = await contract.connect(signer).whitelistMint(proof, quantity, {value: ethers.utils.parseEther(mintPrice).mul(quantity)})
+      tx = await contract.connect(signer).whitelistMint(proof, quantity, {value: ethers.utils.parseEther(MINT_PRICE).mul(quantity)})
       setStatus('pending')
     } catch (err) {
       console.log(err)
@@ -123,7 +122,7 @@ export default function App() {
     setStatus('signing')
     let tx;
     try {
-      tx = await contract.connect(signer).publicMint(quantity, {value: ethers.utils.parseEther(mintPrice).mul(quantity)})
+      tx = await contract.connect(signer).publicMint(quantity, {value: ethers.utils.parseEther(MINT_PRICE).mul(quantity)})
       setStatus('pending')
     } catch (err) {
       console.log(err)
@@ -169,8 +168,8 @@ export default function App() {
               <>{!address ? <CardLogIn /> : ""}</>
               <>{address && mintStatus === 0 ? <CardMessage message={getMessage["closed"]} /> : ""}</>
               <>{address && status === "init" && mintStatus > 0 && !CHAIN_IDS.includes(chainId) ? <CardMessage message={getMessage["wrongChain"]} /> : ""}</>
-              <>{address && status === "init" && mintStatus === 1 && CHAIN_IDS.includes(chainId) ? <CardPresaleMint address={address} presaleMint={presaleMint} mintPrice={mintPrice} /> : ""}</>
-              <>{address && status === "init" && mintStatus === 2 && CHAIN_IDS.includes(chainId) ? <CardPublicMint publicMint={publicMint} mintPrice={mintPrice} /> : ""}</>
+              <>{address && status === "init" && mintStatus === 1 && CHAIN_IDS.includes(chainId) ? <CardPresaleMint address={address} presaleMint={presaleMint} mintPrice={MINT_PRICE} /> : ""}</>
+              <>{address && status === "init" && mintStatus === 2 && CHAIN_IDS.includes(chainId) ? <CardPublicMint publicMint={publicMint} mintPrice={MINT_PRICE} /> : ""}</>
               <>{address && PENDING_STATUSES.includes(status) && mintStatus > 0 ? <CardMessage message={getMessage[status]} /> : ""}</>
             </Card.Body>
           </Card>

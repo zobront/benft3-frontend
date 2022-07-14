@@ -31,7 +31,7 @@ export default function CardPresaleMint({address, presaleMint, mintPrice}) {
     const getProof = (inputAddr) => {
         const leaves = addressJson.map(owner => createLeaf(owner));
         const tree = new MerkleTree(leaves, ethers.utils.keccak256, { sortPairs: true });
-        return tree.getHexProof(createLeaf({"address": '0xf346100e892553DcEb41A927Fb668DA7B0b7C964', "quantity": 1 }));
+        return tree.getHexProof(createLeaf({"address": inputAddr, "quantity": 1 }));
     }
 
     return (
