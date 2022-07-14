@@ -1,3 +1,3 @@
-# Front End for Capitalist Pigs NFT
+# Front End for Vegas BeNFT 
 
 Go here for contracts, scripts, etc.
