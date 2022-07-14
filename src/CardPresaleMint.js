@@ -46,7 +46,7 @@ export default function CardPresaleMint({address, presaleMint, mintPrice}) {
                         <br /><br />
                         <Form.Control type="text" placeholder="How many would you like to mint?" value={quantity} onChange={(e) => handleChange(e)} />
                     </Form>
-                    <Button variant="primary" disabled={quantity === '' || !checked ? true : false} style={{margin: 'auto', marginTop: '1rem' }} onClick={() => presaleMint(quantity)}>
+                    <Button variant="primary" disabled={quantity === '' || !checked ? true : false} style={{margin: 'auto', marginTop: '1rem' }} onClick={() => presaleMint(proof, quantity)}>
                         {quantity === '' ?
                             'Enter a Quantity to Mint' :
                             `Mint Your ${quantity} Vegas BeNFT${quantity > 1 ? 's' : ''}: ${quantity * mintPrice} ETH`}
