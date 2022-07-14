@@ -169,7 +169,7 @@ export default function App() {
               <>{!address ? <CardLogIn /> : ""}</>
               <>{address && mintStatus === 0 ? <CardMessage message={getMessage["closed"]} /> : ""}</>
               <>{address && status === "init" && mintStatus > 0 && !CHAIN_IDS.includes(chainId) ? <CardMessage message={getMessage["wrongChain"]} /> : ""}</>
-              <>{address && status === "init" && mintStatus === 1 && CHAIN_IDS.includes(chainId) ? <CardPresaleMint presaleMint={presaleMint} mintPrice={mintPrice} /> : ""}</>
+              <>{address && status === "init" && mintStatus === 1 && CHAIN_IDS.includes(chainId) ? <CardPresaleMint address={address} presaleMint={presaleMint} mintPrice={mintPrice} /> : ""}</>
               <>{address && status === "init" && mintStatus === 2 && CHAIN_IDS.includes(chainId) ? <CardPublicMint publicMint={publicMint} mintPrice={mintPrice} /> : ""}</>
               <>{address && PENDING_STATUSES.includes(status) && mintStatus > 0 ? <CardMessage message={getMessage[status]} /> : ""}</>
             </Card.Body>
