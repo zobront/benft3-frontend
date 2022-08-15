@@ -5,7 +5,7 @@ import { Button, Card, Form } from 'react-bootstrap';
 import { MerkleTree }  from 'merkletreejs';
 import addressJson from './assets/snapshot.json';
 
-export default function CardPresaleMint({address, presaleMint, mintPrice}) {
+export default function CardPresaleMint({address, presaleMint, mintPrice, whitelistQuantity}) {
     const [proof, setProof] = useState([]);
     const [quantity, setQuantity] = useState('');
     const [checked, setChecked] = useState(false);
@@ -45,6 +45,7 @@ export default function CardPresaleMint({address, presaleMint, mintPrice}) {
                         You also acknowledge that you will be required to opt into the <a href="https://www.benmezrichnft.com/screenplay-token-opt-in-agreement">Screenplay Token Opt In Agreement</a> in order to be eligible for the Screenplay Token Award.</span>
                         <br /><br />
                         <Form.Control type="text" placeholder="How many would you like to mint?" value={quantity} onChange={(e) => handleChange(e)} />
+                        {whitelistQuantity > 0 ? <Form.Text>*Based on your holdings, you are whitelisted to buy up to {whitelistQuantity} NFT{whitelistQuantity > 1 ? "s" : ""}.</Form.Text> : null}
                     </Form>
                     <Button variant="primary" disabled={quantity === '' || !checked ? true : false} style={{margin: 'auto', marginTop: '1rem' }} onClick={() => presaleMint(proof, quantity)}>
                         {quantity === '' ?

@@ -4,6 +4,7 @@ import { Button, Navbar, Container, Card } from 'react-bootstrap';
 
 import web3Modal from './modal.js'
 import ContractArtifact from './assets/Artifact.json';
+import snapshot from './assets/snapshot.json';
 
 import CardLogIn from './CardLogIn'
 import CardPublicMint from './CardPublicMint'
@@ -11,7 +12,7 @@ import CardPresaleMint from './CardPresaleMint'
 import CardMessage from './CardMessage'
 import CardThankYou from './CardThankYou'
 
-const CHAIN_IDS = [0x1, 0x4, 0x7a69]
+const CHAIN_IDS = [0x1]
 
 export default function App() {
   const [status, setStatus] = useState('init');
@@ -22,10 +23,11 @@ export default function App() {
   const [provider, setProvider] = useState();
   const [signer, setSigner] = useState();
   const [address, setAddress] = useState();
+  const [whitelistQuantity, setWhitelistQuantity] = useState();
   const [chainId, setChainId] = useState();
 
   const [contract, setContract] = useState();
-  const [mintStatus, setMintStatus] = useState();
+  const [mintStatus, setMintStatus] = useState(0);
   const [tokenIds, setTokenIds] = useState();
   const [txHash, setTxHash] = useState();
 
@@ -76,20 +78,26 @@ export default function App() {
       setSigner(signer);
 
       const contract = new ethers.Contract(
-        '0x2b58c62be01c1cfa9a00627f4eb8278b4e895736',
+        '0x810ff7073b98ff8706876750196c65a77C8bBAac',
         ContractArtifact.abi,
         provider
       )
       setContract(contract)
-
       setMintStatus(await contract.getMintStatus());
+
+      const alreadyMinted = await contract.mintedWallets(accounts[0]);
+      const whitelistedData = snapshot.filter(owner => owner.address === accounts[0])[0]
+      if (whitelistedData) {
+        alreadyMinted ? setStatus('alreadyMinted') : setWhitelistQuantity(whitelistedData["quantity"]);
+      }
+
     } catch (error) {
       console.error(error);
     }
   }
 
   const getMessage = {
-    closed: {header: 'Minting is Closed', message: 'Come back on Tuesday Jul 18th!'},
+    closed: {header: 'Minting is Closed', message: 'Whitelist minting opens on Wednesday August 17th.'},
     wrongChain: {header: 'Wrong Network', message: 'Please switch to Ethereum Mainnet to mint.'},
     signing: {header: 'Signing Transaction', message: 'Please sign your transaction in Metamask.'},
     pending: {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds. Please leave this window open while you wait.'},
@@ -166,9 +174,9 @@ export default function App() {
           <Card style={{ width: '32rem', margin: 'auto', marginTop: '8rem', zIndex: '1' }}>
             <Card.Body>
               <>{!address ? <CardLogIn /> : ""}</>
-              <>{address && mintStatus === 0 ? <CardMessage message={getMessage["closed"]} /> : ""}</>
-              <>{address && status === "init" && mintStatus > 0 && !CHAIN_IDS.includes(chainId) ? <CardMessage message={getMessage["wrongChain"]} /> : ""}</>
-              <>{address && status === "init" && mintStatus === 1 && CHAIN_IDS.includes(chainId) ? <CardPresaleMint address={address} presaleMint={presaleMint} mintPrice={MINT_PRICE} /> : ""}</>
+              <>{address && status === "init" && !CHAIN_IDS.includes(chainId) ? <CardMessage message={getMessage["wrongChain"]} /> : ""}</>
+              <>{address && status === "init" && mintStatus === 0 && CHAIN_IDS.includes(chainId) ? <CardMessage message={getMessage["closed"]} /> : ""}</>
+              <>{address && status === "init" && mintStatus === 1 && CHAIN_IDS.includes(chainId) ? <CardPresaleMint address={address} presaleMint={presaleMint} mintPrice={MINT_PRICE} whitelistQuantity={whitelistQuantity} /> : ""}</>
               <>{address && status === "init" && mintStatus === 2 && CHAIN_IDS.includes(chainId) ? <CardPublicMint publicMint={publicMint} mintPrice={MINT_PRICE} /> : ""}</>
               <>{address && PENDING_STATUSES.includes(status) && mintStatus > 0 ? <CardMessage message={getMessage[status]} /> : ""}</>
             </Card.Body>
