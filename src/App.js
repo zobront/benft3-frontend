@@ -16,6 +16,7 @@ const CHAIN_IDS = [0x1]
 
 export default function App() {
   const [status, setStatus] = useState('init');
+  const [error, setError] = useState();
   const PENDING_STATUSES = ["signing", "pending", "failed", "alreadyMinted", "unknownError"];
   const MINT_PRICE = '0.06'
 
@@ -102,7 +103,7 @@ export default function App() {
     signing: {header: 'Signing Transaction', message: 'Please sign your transaction in Metamask.'},
     pending: {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds. Please leave this window open while you wait.'},
     alreadyMinted: {header: 'You already minted!', message: `You've already used your whitelist spot. You'll be able to mint again if more are available in the public mint.`},
-    unknownError: {header: 'Unknown Error', message: `Something went wrong. Please try again, and reach out to the mods if it doesn't resolve.`}
+    unknownError: {header: 'Unexpected Error', message: error}
   }
 
   const presaleMint = async (proof, quantity) => {
@@ -117,8 +118,9 @@ export default function App() {
       tx = await contract.connect(signer).whitelistMint(proof, quantity, {value: ethers.utils.parseEther(MINT_PRICE).mul(quantity)})
       setStatus('pending')
     } catch (err) {
-      console.log(err)
       setStatus('unknownError')
+      setError(err)
+      console.log(err);
       return
     }
     
@@ -135,6 +137,7 @@ export default function App() {
     } catch (err) {
       console.log(err)
       setStatus('unknownError')
+      setError(err)
       return
     }
     
@@ -145,6 +148,7 @@ export default function App() {
   const _processReceipt = (receipt) => {
     if (receipt.status === 0) {
       setStatus('unknownError')
+      setError('there is no receipt')
     } else {
       try {
         setTxHash(receipt.transactionHash);
