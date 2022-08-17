@@ -14,7 +14,7 @@ export default function CardPresaleMint({address, presaleMint, mintPrice, whitel
         if (address) {
             setProof(getProof(address));
         }
-    }, [address, quantity])
+    }, [address])
 
     const handleChange = (event) => {
         event.preventDefault();
@@ -31,7 +31,13 @@ export default function CardPresaleMint({address, presaleMint, mintPrice, whitel
     const getProof = (inputAddr) => {
         const leaves = addressJson.map(owner => createLeaf(owner));
         const tree = new MerkleTree(leaves, ethers.utils.keccak256, { sortPairs: true });
-        return tree.getHexProof(createLeaf({"address": inputAddr, "quantity": quantity }));
+        return tree.getHexProof(createLeaf({"address": inputAddr, "quantity": 1 }));
+    }
+
+    const getFinalProof = (addr, q) => {
+        const leaves = addressJson.map(owner => createLeaf(owner));
+        const tree = new MerkleTree(leaves, ethers.utils.keccak256, { sortPairs: true });
+        return tree.getHexProof(createLeaf({"address": addr, "quantity": q }));
     }
 
     return (
@@ -47,7 +53,7 @@ export default function CardPresaleMint({address, presaleMint, mintPrice, whitel
                         <Form.Control type="text" placeholder="How many would you like to mint?" value={quantity} onChange={(e) => handleChange(e)} />
                         {whitelistQuantity > 0 ? <Form.Text>*Based on your holdings, you are whitelisted to buy up to {whitelistQuantity} NFT{whitelistQuantity > 1 ? "s" : ""}.</Form.Text> : null}
                     </Form>
-                    <Button variant="primary" disabled={quantity === '' || !checked || quantity > whitelistQuantity ? true : false} style={{margin: 'auto', marginTop: '1rem' }} onClick={() => presaleMint(proof, quantity)}>
+                    <Button variant="primary" disabled={quantity === '' || !checked || quantity > whitelistQuantity ? true : false} style={{margin: 'auto', marginTop: '1rem' }} onClick={() => presaleMint(getFinalProof(address, quantity), quantity)}>
                         {quantity === '' ?
                             'Enter a Quantity to Mint' :
                             `Mint Your ${quantity} Vegas BeNFT${quantity > 1 ? 's' : ''}: ${quantity * mintPrice} ETH`}
