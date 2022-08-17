@@ -118,8 +118,8 @@ export default function App() {
       tx = await contract.connect(signer).whitelistMint(proof, quantity, {value: ethers.utils.parseEther(MINT_PRICE).mul(quantity)})
       setStatus('pending')
     } catch (err) {
-      setStatus('unknownError')
       setError(err)
+      setStatus('unknownError')
       console.log(err);
       return
     }
@@ -136,8 +136,8 @@ export default function App() {
       setStatus('pending')
     } catch (err) {
       console.log(err)
-      setStatus('unknownError')
       setError(err)
+      setStatus('unknownError')
       return
     }
     
@@ -147,8 +147,8 @@ export default function App() {
 
   const _processReceipt = (receipt) => {
     if (receipt.status === 0) {
-      setStatus('unknownError')
       setError('there is no receipt')
+      setStatus('unknownError')
     } else {
       try {
         setTxHash(receipt.transactionHash);
