@@ -7,14 +7,14 @@ import addressJson from './assets/snapshot.json';
 
 export default function CardPresaleMint({address, presaleMint, mintPrice, whitelistQuantity}) {
     const [proof, setProof] = useState([]);
-    const [quantity, setQuantity] = useState('');
+    const [quantity, setQuantity] = useState(1);
     const [checked, setChecked] = useState(false);
 
     useEffect(() => {
         if (address) {
             setProof(getProof(address));
         }
-    }, [address])
+    }, [address, quantity])
 
     const handleChange = (event) => {
         event.preventDefault();
@@ -31,7 +31,7 @@ export default function CardPresaleMint({address, presaleMint, mintPrice, whitel
     const getProof = (inputAddr) => {
         const leaves = addressJson.map(owner => createLeaf(owner));
         const tree = new MerkleTree(leaves, ethers.utils.keccak256, { sortPairs: true });
-        return tree.getHexProof(createLeaf({"address": inputAddr, "quantity": quantity || 1 }));
+        return tree.getHexProof(createLeaf({"address": inputAddr, "quantity": quantity }));
     }
 
     return (
