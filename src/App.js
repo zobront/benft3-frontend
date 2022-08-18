@@ -16,7 +16,7 @@ const CHAIN_IDS = [0x1]
 
 export default function App() {
   const [status, setStatus] = useState('init');
-  const [error, setError] = useState('');
+  const [error, setError] = useState('There was an error processing your transaction. Please open a support ticket if it continues.');
   const PENDING_STATUSES = ["signing", "pending", "failed", "alreadyMinted", "unknownError"];
   const MINT_PRICE = '0.06'
 
@@ -147,7 +147,7 @@ export default function App() {
 
   const _processReceipt = (receipt) => {
     if (receipt.status === 0) {
-      setError('there is no receipt')
+      setError('There is no receipt for your transaction.')
       setStatus('unknownError')
     } else {
       try {
