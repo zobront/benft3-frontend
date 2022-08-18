@@ -16,7 +16,7 @@ const CHAIN_IDS = [0x1]
 
 export default function App() {
   const [status, setStatus] = useState('init');
-  const [error, setError] = useState();
+  const [error, setError] = useState('');
   const PENDING_STATUSES = ["signing", "pending", "failed", "alreadyMinted", "unknownError"];
   const MINT_PRICE = '0.06'
 
