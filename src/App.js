@@ -103,7 +103,7 @@ export default function App() {
     signing: {header: 'Signing Transaction', message: 'Please sign your transaction in Metamask.'},
     pending: {header: 'Pending Block Confirmation', message: 'Assuming network traffic is reasonable, everything should be confirmed in about 15 seconds. Please leave this window open while you wait.'},
     alreadyMinted: {header: 'You already minted!', message: `You've already used your whitelist spot. You'll be able to mint again if more are available in the public mint.`},
-    unknownError: {header: 'Unexpected Error', message: error}
+    unknownError: {header: 'Unexpected Error', message: `${error}` }
   }
 
   const presaleMint = async (proof, quantity) => {
