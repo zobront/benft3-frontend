@@ -86,11 +86,11 @@ export default function App() {
       setContract(contract)
       setMintStatus(await contract.getMintStatus());
 
-      const alreadyMinted = await contract.mintedWallets(accounts[0]);
-      const whitelistedData = snapshot.filter(owner => owner.address === accounts[0])[0]
-      if (whitelistedData) {
-        alreadyMinted ? setStatus('alreadyMinted') : setWhitelistQuantity(whitelistedData["quantity"]);
-      }
+      // const alreadyMinted = await contract.mintedWallets(accounts[0]);
+      // const whitelistedData = snapshot.filter(owner => owner.address === accounts[0])[0]
+      // if (whitelistedData) {
+      //   alreadyMinted ? setStatus('alreadyMinted') : setWhitelistQuantity(whitelistedData["quantity"]);
+      // }
 
     } catch (error) {
       console.error(error);
